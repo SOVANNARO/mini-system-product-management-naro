@@ -1,4 +1,11 @@
 export interface ProductResponse {
+  products: Product[];
+  total: number;
+  skip: number;
+  limit: number;
+}
+
+export interface Product {
   id: number;
   title: string;
   price: number;
@@ -20,4 +27,9 @@ export interface Meta {
   updatedAt: Date;
   barcode: string;
   qrCode: string;
+}
+
+export interface GetAllProductsParams {
+  limit: number;
+  skip: number;
 }
