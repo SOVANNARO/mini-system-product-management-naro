@@ -1,5 +1,9 @@
 import { del, get, post, put } from "@/lib/api";
-import { GetAllProductsParams, ProductResponse } from "@/types/product";
+import {
+  GetAllProductsParams,
+  ProductRequest,
+  ProductResponse,
+} from "@/types/product";
 import apiPath from "@/constants/apiPath";
 
 export const getAllProductService = async (
@@ -12,4 +16,14 @@ export const getAllProductService = async (
     .replace("{limit}", limit.toString())
     .replace("{skip}", skip.toString());
   return get<ProductResponse>(url);
+};
+
+export const createProductService = async (data: ProductRequest) => {
+  try {
+    const url = apiPath.product.create;
+    const response = await post(url, data);
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };

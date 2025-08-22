@@ -15,13 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import {
-  PencilIcon,
-  TrashIcon,
-  ChevronLeft,
-  ChevronRight,
-  MoreHorizontal,
-} from "lucide-react";
+import { PencilIcon, TrashIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { Product, ProductResponse } from "@/types/product";
 
@@ -33,6 +27,7 @@ const columns: ColumnDef<Product>[] = [
         checked={table.getIsAllPageRowsSelected()}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
+        className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
       />
     ),
     cell: ({ row }) => (
@@ -40,6 +35,7 @@ const columns: ColumnDef<Product>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
+        className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
       />
     ),
     enableSorting: false,
@@ -104,6 +100,7 @@ const columns: ColumnDef<Product>[] = [
         <Button
           variant="ghost"
           size="icon"
+          className="cursor-pointer"
           onClick={() => console.log("Edit", row.original.id)}
         >
           <PencilIcon className="h-4 w-4" />
@@ -111,6 +108,7 @@ const columns: ColumnDef<Product>[] = [
         <Button
           variant="ghost"
           size="icon"
+          className="cursor-pointer"
           onClick={() => console.log("Delete", row.original.id)}
         >
           <TrashIcon className="h-4 w-4" />
@@ -161,7 +159,7 @@ export function ProductTable({
           key={i}
           variant={currentPage === i ? "default" : "outline"}
           size="sm"
-          className={`h-8 w-8 p-0 ${
+          className={`h-8 w-8 p-0 cursor-pointer ${
             currentPage === i ? "bg-blue-500 text-white" : ""
           }`}
           onClick={() => handlePageClick(i)}
@@ -177,7 +175,7 @@ export function ProductTable({
           key="ellipsis-start"
           variant="outline"
           size="sm"
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 cursor-pointer"
           disabled
         >
           ...
@@ -201,6 +199,9 @@ export function ProductTable({
 
     return pageNumbers;
   };
+
+  const startIndex = (currentPage - 1) * data.limit + 1;
+  const endIndex = Math.min(currentPage * data.limit, data.total);
 
   return (
     <div className="rounded-md border">
@@ -244,14 +245,13 @@ export function ProductTable({
       </Table>
       <div className="flex items-center justify-between px-4 py-3 border-t">
         <div className="flex-1 text-sm text-gray-700">
-          Showing {data.skip + 1} to{" "}
-          {Math.min(data.skip + data.limit, data.total)} from {data.total}
+          Showing {startIndex} to {endIndex} from {data.total}
         </div>
         <div className="flex items-center space-x-1">
           <Button
             variant="outline"
             size="sm"
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 cursor-pointer"
             onClick={() => handlePageClick(currentPage - 1)}
             disabled={currentPage === 1}
           >
@@ -261,7 +261,7 @@ export function ProductTable({
           <Button
             variant="outline"
             size="sm"
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 cursor-pointer"
             onClick={() => handlePageClick(currentPage + 1)}
             disabled={currentPage === totalPages}
           >

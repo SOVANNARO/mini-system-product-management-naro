@@ -33,3 +33,12 @@ export interface GetAllProductsParams {
   limit: number;
   skip: number;
 }
+
+export interface ProductRequest {
+  title: string;
+  description: string;
+  price: number;
+  sku: string;
+  stock: number;
+  category: string;
+}

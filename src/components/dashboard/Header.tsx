@@ -3,10 +3,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
+import usePageTitleStore from "@/stores/usePageTitleStore";
 
 const Header = () => {
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
+  const { title } = usePageTitleStore();
 
   useEffect(() => {
     const fetchGitHubProfile = async () => {
@@ -25,7 +27,7 @@ const Header = () => {
 
   return (
     <header className="h-16 bg-white border-b px-4 flex items-center justify-between shadow-sm">
-      <h1 className="text-2xl font-semibold text-gray-800">Product</h1>
+      <h1 className="text-2xl font-semibold text-gray-800">{title}</h1>
       <div className="flex items-center gap-4">
         <div className="relative cursor-pointer">
           <Bell className="h-6 w-6 text-gray-600" />

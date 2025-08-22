@@ -18,7 +18,6 @@ export const get = async <T>(
     const response = await api.get<T>(url, config);
     return response.data;
   } catch (error) {
-    console.error("Error making GET request:", error);
     throw error;
   }
 };
@@ -39,7 +38,6 @@ export const post = async <T>(
     const response = await api.post<T>(url, data, config);
     return response.data;
   } catch (error) {
-    console.error("Error making POST request:", error);
     throw error;
   }
 };
@@ -60,7 +58,6 @@ export const put = async <T>(
     const response = await api.put<T>(url, data, config);
     return response.data;
   } catch (error) {
-    console.error("Error making PUT request:", error);
     throw error;
   }
 };
@@ -79,7 +76,6 @@ export const del = async <T>(
     const response = await api.delete<T>(url, config);
     return response.data;
   } catch (error) {
-    console.error("Error making DELETE request:", error);
     throw error;
   }
 };
