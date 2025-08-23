@@ -8,6 +8,8 @@ import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import usePageTitleStore from "@/stores/usePageTitleStore";
 import { useEffect } from "react";
+import { toast } from "sonner";
+import useMutateProduct from "@/stores/product/useMutateProduct";
 
 export default function Home() {
   const router = useRouter();
@@ -17,6 +19,7 @@ export default function Home() {
   });
 
   const { data, error, isLoading } = useQueryProduct(pagination);
+  const { deleteProduct } = useMutateProduct();
 
   const setTitle = usePageTitleStore((state) => state.setTitle);
 
@@ -30,6 +33,15 @@ export default function Home() {
 
   const handleAddProduct = () => {
     router.push("/add-product");
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteProduct(id);
+      toast.success("Product deleted successfully");
+    } catch {
+      toast.error("Failed to delete product");
+    }
   };
 
   return (
@@ -69,6 +81,7 @@ export default function Home() {
             onPageChange={handlePageChange}
             currentPage={Math.floor(data.skip / data.limit) + 1}
             totalPages={Math.ceil(data.total / data.limit)}
+            onDelete={handleDelete}
           />
         </>
       ) : (

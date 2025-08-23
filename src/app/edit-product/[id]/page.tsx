@@ -1,100 +1,87 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@radix-ui/react-select";
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { use } from "react"; // Import use from React
+import useMutateProduct from "@/stores/product/useMutateProduct";
+import { toast } from "sonner";
+import usePageTitleStore from "@/stores/usePageTitleStore";
+import ProductForm, { ProductFormData } from "@/components/product/ProductForm";
+import useQueryProductById from "@/stores/product/useQueryProductById";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const EditProduct = () => {
+const EditProduct = ({
+  params,
+}: {
+  params: { id: string } | Promise<{ id: string }>;
+}) => {
+  const router = useRouter();
+  const { updateProduct } = useMutateProduct();
+  const setTitle = usePageTitleStore((state) => state.setTitle);
+
+  // Unwrap params if it's a Promise
+  const unwrappedParams =
+    typeof params === "object" && "then" in params ? use(params) : params;
+  const id = unwrappedParams.id;
+
+  const { data: product, isLoading } = useQueryProductById(id);
+
+  useEffect(() => {
+    setTitle("Edit Product");
+  }, [setTitle]);
+
+  const handleCancel = () => {
+    router.push("/");
+  };
+
+  const onSubmit = async (data: ProductFormData) => {
+    try {
+      await updateProduct({ id, data });
+      toast.success("Product updated successfully", {
+        description: `${data.title} has been updated in your inventory.`,
+        action: {
+          label: "View Products",
+          onClick: () => router.push("/"),
+        },
+      });
+      router.push("/");
+    } catch {
+      toast.error("Failed to update product", {
+        description:
+          "An error occurred while updating the product. Please try again.",
+        action: {
+          label: "Retry",
+          onClick: () => onSubmit(data),
+        },
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-1/4" />
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+        <div className="flex justify-end space-x-4">
+          <Skeleton className="h-10 w-24" />
+          <Skeleton className="h-10 w-24" />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center space-x-2">
-          <span className="text-blue-600">Product</span>
-          <span className="text-gray-400">&gt;</span>
-          <span className="text-gray-600">Edit Product</span>
-        </div>
-        <div className="space-x-2">
-          <Button variant="outline">Cancel</Button>
-          <Button>Save Product</Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 gap-6">
-        <div className="col-span-2 space-y-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">General Information</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product Name
-                </label>
-                <Input placeholder="Smartwatch E2" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
-                </label>
-                <Textarea
-                  placeholder="Smartwatch for men women notify you incoming calls, SMS notifications. when you connect the smartphone with fitness tracker. Connect fitness tracker with your phone, you will never miss a call and a message. The smart watches for android phones will vibrate to alert you if your phone receives any notifications. You can reject calls and view message directly from your watch. A best gift for family and friends"
-                  rows={6}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Pricing</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Base Price
-                </label>
-                <Input type="number" placeholder="400.00" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Discount Percentage (%)
-                </label>
-                <Input type="number" placeholder="0" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Inventory</h2>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  SKU
-                </label>
-                <Input placeholder="302002" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Quantity
-                </label>
-                <Input type="number" placeholder="124" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Category</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Product Category
-              </label>
-              <Select>
-                <option value="watch">Watch</option>
-                {/* Add more options as needed */}
-              </Select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ProductForm
+      initialData={product}
+      onSubmit={onSubmit}
+      onCancel={handleCancel}
+      submitButtonText="Update Product"
+    />
   );
 };
 

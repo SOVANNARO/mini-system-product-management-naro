@@ -40,7 +40,12 @@ export default function RootLayout({
               <main className="flex-1 p-6 overflow-auto">
                 <DynamicBreadcrumb />
                 {children}
-                <Toaster />
+                <Toaster
+                  position="top-center"
+                  expand={false}
+                  richColors
+                  closeButton
+                />
               </main>
             </div>
           </div>

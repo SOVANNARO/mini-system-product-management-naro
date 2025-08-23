@@ -5,6 +5,7 @@ import {
   ProductResponse,
 } from "@/types/product";
 import apiPath from "@/constants/apiPath";
+import { ProductDetailResponse } from "@/types/ProductDetail";
 
 export const getAllProductService = async (
   params?: Partial<GetAllProductsParams>
@@ -18,12 +19,30 @@ export const getAllProductService = async (
   return get<ProductResponse>(url);
 };
 
+export const getProductByIdService = async (id: string) => {
+  const url = apiPath.product.getById.replace("{id}", id);
+  return get<ProductDetailResponse>(url);
+};
+
 export const createProductService = async (data: ProductRequest) => {
-  try {
-    const url = apiPath.product.create;
-    const response = await post(url, data);
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  const url = apiPath.product.create;
+  return post(url, data);
+};
+
+export const updateProductService = async (
+  id: string,
+  data: Partial<ProductRequest>
+) => {
+  const url = apiPath.product.update.replace("{id}", id);
+  return put(url, data);
+};
+
+export const deleteProductService = async (id: string) => {
+  const url = apiPath.product.delete.replace("{id}", id);
+  return del(url);
+};
+
+export const getCategoriesService = async (): Promise<string[]> => {
+  const url = apiPath.product.categories;
+  return get<string[]>(url);
 };

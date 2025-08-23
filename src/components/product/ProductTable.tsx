@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -18,8 +18,22 @@ import { Button } from "@/components/ui/button";
 import { PencilIcon, TrashIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { Product, ProductResponse } from "@/types/product";
+import { useRouter } from "next/navigation";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-const columns: ColumnDef<Product>[] = [
+const getColumns = (
+  router: AppRouterInstance,
+  onDelete: (id: string) => void
+): ColumnDef<Product>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -95,26 +109,63 @@ const columns: ColumnDef<Product>[] = [
   {
     id: "actions",
     header: "Actions",
-    cell: ({ row }) => (
-      <div className="flex space-x-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="cursor-pointer"
-          onClick={() => console.log("Edit", row.original.id)}
-        >
-          <PencilIcon className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="cursor-pointer"
-          onClick={() => console.log("Delete", row.original.id)}
-        >
-          <TrashIcon className="h-4 w-4" />
-        </Button>
-      </div>
-    ),
+    cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+      return (
+        <div className="flex space-x-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="cursor-pointer"
+            onClick={() => router.push(`/edit-product/${row.original.id}`)}
+          >
+            <PencilIcon className="h-4 w-4" />
+          </Button>
+          <Dialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+          >
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="icon" className="cursor-pointer">
+                <TrashIcon className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  Are you sure you want to delete this product?
+                </DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete the
+                  product.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  className="cursor-pointer"
+                  variant="outline"
+                  onClick={() => setIsDeleteDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="cursor-pointer"
+                  variant="destructive"
+                  onClick={() => {
+                    onDelete(row.original.id.toString());
+                    setIsDeleteDialogOpen(false);
+                  }}
+                >
+                  Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      );
+    },
   },
 ];
 
@@ -123,6 +174,7 @@ interface ProductTableProps {
   onPageChange: (newSkip: number) => void;
   currentPage: number;
   totalPages: number;
+  onDelete: (id: string) => void;
 }
 
 export function ProductTable({
@@ -130,7 +182,11 @@ export function ProductTable({
   onPageChange,
   currentPage,
   totalPages,
+  onDelete,
 }: ProductTableProps) {
+  const router = useRouter();
+  const columns = getColumns(router, onDelete);
+
   const table = useReactTable({
     data: data.products,
     columns,
@@ -145,14 +201,11 @@ export function ProductTable({
   const renderPageNumbers = () => {
     const pageNumbers = [];
     const maxVisiblePages = 5;
-
     let startPage = Math.max(1, currentPage - 2);
     const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
     }
-
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(
         <Button
@@ -168,7 +221,6 @@ export function ProductTable({
         </Button>
       );
     }
-
     if (startPage > 1) {
       pageNumbers.unshift(
         <Button
@@ -182,7 +234,6 @@ export function ProductTable({
         </Button>
       );
     }
-
     if (endPage < totalPages) {
       pageNumbers.push(
         <Button
@@ -196,7 +247,6 @@ export function ProductTable({
         </Button>
       );
     }
-
     return pageNumbers;
   };
 

@@ -21,7 +21,7 @@ const DynamicBreadcrumb = () => {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
-            <Link href="/" className="text-blue-500 ">
+            <Link href="/" className="text-blue-500">
               Home
             </Link>
           </BreadcrumbLink>
@@ -29,11 +29,13 @@ const DynamicBreadcrumb = () => {
         {pathSegments.map((segment, index) => {
           const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
           const isLast = index === pathSegments.length - 1;
+          const isEditProduct = segment === "edit-product";
+
           return (
             <React.Fragment key={href}>
               <BreadcrumbSeparator>&gt;</BreadcrumbSeparator>
               <BreadcrumbItem>
-                {isLast ? (
+                {isLast || isEditProduct ? (
                   <BreadcrumbPage className="capitalize">
                     {segment.replace("-", " ")}
                   </BreadcrumbPage>
