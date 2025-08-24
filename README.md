@@ -19,5 +19,3 @@ Tech Stack
 npx create-next-app@15.4.7
 pnpm dlx shadcn@latest init
 
-https://github.com/SOVANNARO/next-auth-v5-base/blob/master/src/constants/shared/apiPath.ts
-
