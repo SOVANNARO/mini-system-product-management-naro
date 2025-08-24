@@ -1,13 +1,12 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { use } from "react"; // Import use from React
 import useMutateProduct from "@/stores/product/useMutateProduct";
-import { toast } from "sonner";
 import usePageTitleStore from "@/stores/usePageTitleStore";
 import ProductForm, { ProductFormData } from "@/components/product/ProductForm";
 import useQueryProductById from "@/stores/product/useQueryProductById";
-import { Skeleton } from "@/components/ui/skeleton";
+import { showToast } from "@/components/utils/toast";
+import ProductFormSkeleton from "@/components/product/ProductFormSkeleton";
 
 const EditProduct = ({
   params,
@@ -18,7 +17,6 @@ const EditProduct = ({
   const { updateProduct } = useMutateProduct();
   const setTitle = usePageTitleStore((state) => state.setTitle);
 
-  // Unwrap params if it's a Promise
   const unwrappedParams =
     typeof params === "object" && "then" in params ? use(params) : params;
   const id = unwrappedParams.id;
@@ -36,43 +34,31 @@ const EditProduct = ({
   const onSubmit = async (data: ProductFormData) => {
     try {
       await updateProduct({ id, data });
-      toast.success("Product updated successfully", {
-        description: `${data.title} has been updated in your inventory.`,
-        action: {
+      showToast(
+        "success",
+        "Product updated successfully",
+        `${data.title} has been updated in your inventory.`,
+        {
           label: "View Products",
           onClick: () => router.push("/"),
-        },
-      });
+        }
+      );
       router.push("/");
     } catch {
-      toast.error("Failed to update product", {
-        description:
-          "An error occurred while updating the product. Please try again.",
-        action: {
+      showToast(
+        "error",
+        "Failed to update product",
+        "An error occurred while updating the product. Please try again.",
+        {
           label: "Retry",
           onClick: () => onSubmit(data),
-        },
-      });
+        }
+      );
     }
   };
 
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-10 w-1/4" />
-        <div className="space-y-4">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
-        </div>
-        <div className="flex justify-end space-x-4">
-          <Skeleton className="h-10 w-24" />
-          <Skeleton className="h-10 w-24" />
-        </div>
-      </div>
-    );
+    return <ProductFormSkeleton />;
   }
 
   return (

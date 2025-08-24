@@ -3,13 +3,14 @@ import { useState } from "react";
 import { ProductTable } from "@/components/product/ProductTable";
 import useQueryProduct from "@/stores/product/useQueryProduct";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import usePageTitleStore from "@/stores/usePageTitleStore";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import useMutateProduct from "@/stores/product/useMutateProduct";
+import ActionButton from "@/components/form/ActionButton";
+import ProductTableSkeleton from "@/components/product/ProductTableSkeleton";
 
 export default function Home() {
   const router = useRouter();
@@ -47,20 +48,7 @@ export default function Home() {
   return (
     <>
       {isLoading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-96 w-full" />
-          <div className="flex justify-between items-center">
-            <Skeleton className="h-8 w-48" />
-            <div className="flex space-x-2">
-              <Skeleton className="h-8 w-8" />
-              <Skeleton className="h-8 w-8" />
-              <Skeleton className="h-8 w-8" />
-              <Skeleton className="h-8 w-8" />
-              <Skeleton className="h-8 w-8" />
-            </div>
-          </div>
-        </div>
+        <ProductTableSkeleton />
       ) : error ? (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
           <strong className="font-bold">Error: </strong>
@@ -69,12 +57,14 @@ export default function Home() {
       ) : data ? (
         <>
           <div className="flex justify-end items-center mb-4">
-            <Button
-              className="bg-blue-500 cursor-pointer hover:bg-blue-500"
+            <ActionButton
               onClick={handleAddProduct}
+              icon={PlusIcon}
+              variant="default"
+              className="bg-blue-500 hover:bg-blue-600 text-white"
             >
-              <PlusIcon /> Add Product
-            </Button>
+              Add Product
+            </ActionButton>
           </div>
           <ProductTable
             data={data}
