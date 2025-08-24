@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, use } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useMutateProduct from "@/stores/product/useMutateProduct";
 import usePageTitleStore from "@/stores/usePageTitleStore";
@@ -8,18 +8,16 @@ import useQueryProductById from "@/stores/product/useQueryProductById";
 import { showToast } from "@/components/utils/toast";
 import ProductFormSkeleton from "@/components/product/ProductFormSkeleton";
 
-const EditProduct = ({
-  params,
-}: {
-  params: { id: string } | Promise<{ id: string }>;
-}) => {
+interface EditProductProps {
+  params: { id: string };
+}
+
+const EditProduct = ({ params }: EditProductProps) => {
   const router = useRouter();
   const { updateProduct } = useMutateProduct();
   const setTitle = usePageTitleStore((state) => state.setTitle);
 
-  const unwrappedParams =
-    typeof params === "object" && "then" in params ? use(params) : params;
-  const id = unwrappedParams.id;
+  const id = params.id;
 
   const { data: product, isLoading } = useQueryProductById(id);
 
