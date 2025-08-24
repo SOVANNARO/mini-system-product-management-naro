@@ -35,7 +35,7 @@ const CategorySelectField = ({
       <Controller
         name={name}
         control={control}
-        render={({ field, fieldState: { error } }) => (
+        render={({ field }) => (
           <Popover>
             <PopoverTrigger asChild>
               <Button

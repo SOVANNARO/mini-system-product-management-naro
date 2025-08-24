@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { ProductTable } from "@/components/product/ProductTable";
 import useQueryProduct from "@/stores/product/useQueryProduct";
-import { Skeleton } from "@/components/ui/skeleton";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import usePageTitleStore from "@/stores/usePageTitleStore";
