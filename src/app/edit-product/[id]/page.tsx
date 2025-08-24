@@ -9,7 +9,7 @@ import { showToast } from "@/components/utils/toast";
 import ProductFormSkeleton from "@/components/product/ProductFormSkeleton";
 
 interface EditProductProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const EditProduct = ({ params }: EditProductProps) => {
@@ -17,7 +17,7 @@ const EditProduct = ({ params }: EditProductProps) => {
   const { updateProduct } = useMutateProduct();
   const setTitle = usePageTitleStore((state) => state.setTitle);
 
-  const id = params.id;
+  const { id } = React.use(params);
 
   const { data: product, isLoading } = useQueryProductById(id);
 
