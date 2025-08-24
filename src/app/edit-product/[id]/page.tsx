@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import useMutateProduct from "@/stores/product/useMutateProduct";
 import usePageTitleStore from "@/stores/usePageTitleStore";
@@ -17,7 +17,7 @@ const EditProduct = ({ params }: EditProductProps) => {
   const { updateProduct } = useMutateProduct();
   const setTitle = usePageTitleStore((state) => state.setTitle);
 
-  const { id } = React.use(params);
+  const { id } = use(params);
 
   const { data: product, isLoading } = useQueryProductById(id);
 
