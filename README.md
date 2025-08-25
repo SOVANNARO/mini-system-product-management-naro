@@ -5,7 +5,7 @@ The project is designed with a clean architecture, well-organized folder structu
 
 ---
 
-👉 **[Live Demo Here 🚀](https://mini-system-product-management-naro-qd08q9vyz.vercel.app/)**
+👉 **[Live Demo Here 🚀](https://mini-system-product-management-naro.vercel.app/)**
 
 ## ✨ Tech Stack
 
